@@ -18,7 +18,7 @@ app.post('/todos',(req,res) => {
 		
 		res.status(200).send(result);
 		},(e)=>{
-		res.status(400).send(e);
+		res.status(400).send(e);	//helps with testing, what are we expecting?
 		
 	});
 });
@@ -29,4 +29,4 @@ app.listen(3000, ()=>{
 	console.log("Started on port 3000");
 });
 
-
+module.exports = {app};
