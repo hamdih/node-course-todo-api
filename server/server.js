@@ -35,17 +35,34 @@ app.get('/todos', (req,res) =>{
 	})
 });
 
+app.delete('/todos/:id',(req,res) =>{
+	var id = req.params.id;
+
+	if(!ObjectID.isValid(id)){
+		return res.status(404).send();
+	}
+
+	Todo.findByIdAndRemove(id).then((todo) =>{
+		if(!todo){
+			return res.status(404).send();
+		}
+			res.send(todo);
+	}).catch((e)=>{
+
+		res.status(400).send(todo);
+	});
+
+});
+
 //GET /todos/1234324 ---> dynamics whatever the user puts in
 
 app.get('/todos/:id',(req,res)=>{
 	//res.send(req.params);
-	var id = req.params.id
+	var id = req.params.id;
 	if(!ObjectID.isValid(id)){
 		
 		return res.status(404).send(console.log("Invalid Id:", id));
 	}
-
-
 
 	Todo.findById(id).then((todo)=>{
 		if(!todo){
