@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 var{mongoose} = require('./db/mongoose');
 var {Todo} = require('./models/todo');
 var {user} = require('./models/user');
+const {ObjectID} = require('mongodb');
 
 
 var app = express();
@@ -31,6 +32,22 @@ app.get('/todos', (req,res) =>{
 	},(e) =>{	//if rejected
 		res.status(400).send(e);
 	})
+});
+
+//GET /todos/1234324 ---> dynamics whatever the user puts in
+
+app.get('/todos/:id',(req,res)=>{
+	//res.send(req.params);
+	var id = req.params.id
+	if(!ObjectID.isValid(id)){
+		
+		return res.status(400).send(console.log("Invalid Id:", id));
+	}
+	Todo.find({
+		_id:id
+	}).then((todo)=>{
+		res.status(200).send(todo);
+	}).catch((e)=>console.log(e));
 });
 
 app.listen(3000, ()=>{
