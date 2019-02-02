@@ -8,6 +8,7 @@ const {ObjectID} = require('mongodb');
 
 
 var app = express();
+const port = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 //send json to our express application
@@ -56,8 +57,8 @@ app.get('/todos/:id',(req,res)=>{
 	})
 });
 
-app.listen(3000, ()=>{
-	console.log("Started on port 3000");
+app.listen(port, ()=>{
+	console.log(`Started on port ${port}`);
 });
 
 module.exports = {app};
