@@ -7,10 +7,14 @@ const {Todo} = require('./../models/todo');
 
 const todos = [{
 	_id: new ObjectID(),
-	text:"First test"
+	text:"First test",
+	completed: false,
+	completedAt: null
 	},{
 	text:"second test",
-	_id	: new ObjectID()
+	_id	: new ObjectID(),
+	completed: true,
+	completedAt: null
 }];
 
 beforeEach((done) =>{
@@ -143,4 +147,53 @@ describe('DELETE /todos/:id', () =>{
 			.end(done)
 	});
 
+});
+
+describe('PATCH /todos/:id', () =>{
+	it('should update a todo', (done)=>{
+		var hexId = todos[0]._id.toHexString();
+		request(app)
+			.patch(`/todos/${hexId}`)
+			.send({text:"testing the change"})
+			.expect(200)
+			.expect((res) =>{
+				expect(res.body.todo.text).toBe("testing the change");
+			})
+			.end(done)
+
+	});
+
+	it('should return 404 if todo not found', (done)=>{
+		var id = new ObjectID().toHexString();
+		request(app)
+			.delete(`/todos/${id}`)
+			.expect(404)
+			.end(done)
+	});
+
+	it('should change completedAt if completed is true', (done)=>{
+		var hexId = todos[0]._id.toHexString();
+		request(app)
+			.patch(`/todos/${hexId}`)
+			.send({completed: true})
+			.expect(200)
+			.expect((res) =>{
+				expect(res.body.todo.completedAt).toExist();
+			})
+			.end(done)
+	});
+
+it('should not update any field expect text and completed', (done)=>{
+		var hexId = todos[0]._id.toHexString();
+		request(app)
+			.patch(`/todos/${hexId}`)
+			.send({completedAt: true, _id:0,__v:2 })
+			.expect(200)
+			.expect((res) =>{
+				expect(res.body.todo.completedAt).toNotExist();
+				expect(res.body.todo._id).toNotBe(0);
+				expect(res.body.todo.__v).toNotBe(2);
+			})
+			.end(done)
+	});
 });
