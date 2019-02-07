@@ -18,9 +18,9 @@ app.post('/todos',(req,res) => {
 	var todo = new Todo({
 		text: req.body.text
 	});
-	todo.save().then((result) =>{
+	todo.save().then((todo) =>{
 		
-		res.status(200).send(result);
+		res.status(200).send(todo);
 		},(e)=>{
 		res.status(400).send(e);	//helps with testing, what are we expecting?
 		
