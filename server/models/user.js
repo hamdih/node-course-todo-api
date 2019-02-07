@@ -92,6 +92,31 @@ UserSchema.pre('save',function (next) {
 	 
 	});
 });
+
+UserSchema.statics.findByCredentials = function(email,password){
+	var user = this;
+	
+	return user.findOne({email}).then((user)=>{
+		if(!user){
+			return Promise.reject();				//promises are callbacks ig rejected will go catch(e)
+		}
+		return new Promise((resolve, reject)=>{	//can create own promise with resolve and reject
+			bcrypt.compare(password,user.password, (err,res)=>{
+					if(err){
+					reject();
+					}else if(!res){
+					reject();
+					}
+					resolve(user);
+
+			});
+		});
+	});
+
+};
+
+
+
 var User = mongoose.model('User',UserSchema);
 
 module.exports = {User};

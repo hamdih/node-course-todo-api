@@ -2,6 +2,7 @@ require('./config/config');
 const _ = require('lodash');
 const express = require('express');
 const bodyParser = require('body-parser');
+const bcrypt = require('bcryptjs');
 
 var {mongoose} = require('./db/mongoose');
 var {Todo} = require('./models/todo');
@@ -127,6 +128,21 @@ app.patch('/todos/:id',(req,res) =>{
 	});
 
 });
+
+//POST /users/login {email,password}
+
+	app.post('/users/login', (req,res) =>{
+		var body = _.pick(req.body, ['email', 'password']);
+
+		User.findByCredentials(body.email,body.password).then((user)=>{
+			return user.generateAuthToken().then((token)=>{ //any errors will go to the catch(e)
+			res.header('x-auth',token).send(user); //x- means it is custom
+			});
+			res.send(user);
+		}).catch((e)=>{			//catch(e) will catch promises that are rejected
+			res.status(400).send();
+		})
+	})	
 
 app.listen(port, ()=>{
 	console.log(`Started on port ${port}`);
