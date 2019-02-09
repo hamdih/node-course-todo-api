@@ -15,9 +15,10 @@ const port = process.env.PORT;
 
 app.use(bodyParser.json());
 //send json to our express application
-app.post('/todos',(req,res) => {
+app.post('/todos',authenticate,(req,res) => {
 	var todo = new Todo({
-		text: req.body.text
+		text: req.body.text,
+		_creator: req.user._id
 	});
 	todo.save().then((todo) =>{
 		
@@ -28,8 +29,10 @@ app.post('/todos',(req,res) => {
 	});
 });
 
-app.get('/todos', (req,res) =>{
-	Todo.find().then((todos)=>{
+app.get('/todos', authenticate, (req,res) =>{	//get food trucks saved by user
+	Todo.find({
+		_creator: req.user._id
+	}).then((todos)=>{
 
 		res.send({todos});
 
